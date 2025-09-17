@@ -18,3 +18,8 @@ def test_homepage(client):
     assert response.status_code == 200
     assert b"Test Page" in response.data
 
+
+def test_taskpage(client):
+    response = client.get("/tasks")
+    assert response.status_code == 200
+    assert b"Task Page" in response.data
