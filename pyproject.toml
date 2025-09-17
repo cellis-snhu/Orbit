@@ -1,0 +1,22 @@
+[project]
+name = "orbit"
+version = "0.1.0"
+description = "Orbit is a tool for managing your daily tasks"
+requires-python = ">=3.13"
+dependencies = [
+    "coverage==7.10.6",
+    "flask==3.1.2",
+    "pytest==8.4.2",
+    "ruff==0.13.0",
+    "six==1.17.0",
+]
+
+[tool.ruff]
+line-length = 120
+
+# ignore these errors specifically for flask due to common __init__.py import patterns
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["E402", "F401"]
+
+[tool.coverage.run]
+source = ["app"] # only read python code in the app/ dir
