@@ -29,3 +29,7 @@ class TaskService:
     def delete_task(self, task_id):
         task = self.get_task(task_id)
         self.tasks.remove(task)
+
+# create a test task service singleton to act as a mock db
+# FIXME: Remove this after setting up a test db/real db objects
+task_service = TaskService()

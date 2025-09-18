@@ -1,4 +1,6 @@
 from flask import Flask
+from app.task.service import TaskService
+from app.task.service import task_service
 
 
 def create_app(testing=False):

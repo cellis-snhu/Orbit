@@ -9,6 +9,9 @@ class Task:
         self.name = name
         self.description = description
 
+    def __repr__(self):
+        return f"<Task {self.task_id} Name: {self.name} Description: {self.description}>"
+
     @property
     def task_id(self):
         return self._task_id
