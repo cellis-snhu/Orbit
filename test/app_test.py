@@ -1,10 +1,13 @@
 import pytest
 from app import create_app
+from config import Config
 
+class TestConfig(Config):
+    TESTING = True
 
 @pytest.fixture
 def app():
-    app = create_app(testing=True)
+    app = create_app(TestConfig)
     return app
 
 
@@ -12,6 +15,8 @@ def app():
 def client(app):
     return app.test_client()
 
+def test_config(app):
+    assert app.config["TESTING"] is True
 
 def test_homepage(client):
     response = client.get("/")

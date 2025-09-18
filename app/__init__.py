@@ -1,15 +1,12 @@
 from flask import Flask
 from app.task.service import TaskService
 from app.task.service import task_service
+from config import Config
 
-
-def create_app(testing=False):
+def create_app(config_class=Config):
     app = Flask(__name__)
+    app.config.from_object(config_class)
 
-    if testing:
-        app.config.update(
-            TESTING=True,
-        )
 
     from app.main import bp as main_bp
     from app.task import bp as task_bp
