@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Orbit Default Title (should not see)</title>
+    {% endif %}
+</head>
+
+<body>
+    <div>Orbit Navbar: <a href="/index">Index</a></div>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+
+</html>

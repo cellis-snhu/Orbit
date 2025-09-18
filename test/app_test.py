@@ -15,8 +15,11 @@ def client(app):
 
 def test_homepage(client):
     response = client.get("/")
+    html = response.get_data(as_text=True)
     assert response.status_code == 200
-    assert b"Test Page" in response.data
+    assert "<title>Orbit Task Manager</title>" in html
+    assert "Task 1" in html
+    assert "should not see" not in html
 
 
 def test_taskpage(client):
