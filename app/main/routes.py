@@ -8,8 +8,6 @@ from app.main import bp
 @bp.route("/index")
 def index():
     user = {"username": "Chris"}
-    #FIXME: Remove after deleting test data singleton in TaskService service.py
-    for i in range(1, 4):
-        task_service.create_task(f"task {i}", f"Task {i} test description")
+    tasks = task_service.list_tasks()
+    return render_template("index.html", title="Orbit Task Manager", user=user, tasks=tasks)
 
-    return render_template("index.html", title="Orbit Task Manager", user=user, tasks=task_service.list_tasks())
