@@ -12,6 +12,6 @@ def create_app(config_class=Config):
     from app.task import bp as task_bp
 
     app.register_blueprint(main_bp)
-    app.register_blueprint(task_bp)
+    app.register_blueprint(task_bp, url_prefix="/tasks")
 
     return app

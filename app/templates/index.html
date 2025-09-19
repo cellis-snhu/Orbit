@@ -2,9 +2,114 @@
 
 {% block content %}
 <h1>Hi, {{ user.username }}!</h1>
+
 <div>
-    {% for task in tasks %}
-    <p>{{ task }}</p>
-    {% endfor %}
+  <div>
+    <input id="new-task" type="text" placeholder="Add new task...">
+    <input id="new-description" type="text" placeholder="Description (optional)...">
+    <button id="add-task-btn">Add</button>
+  </div>
+
+  <ul id="task-list">
+    <!-- JS will populate tasks here -->
+  </ul>
 </div>
+
+
+<script>
+  /*
+  Using AJAX (with json instead of xml) to render a dynamic list of tasks where:
+  - new tasks add to the list
+  - checking the completed box removes a task from the list (filters out completed tasks but
+    the tasks themselves are kept)
+  - deleting a task removes it from the list
+   */
+
+// get the full list of tasks
+async function fetchTasks() {
+  const res = await fetch("/tasks");
+  const tasks = await res.json();
+  renderTasks(tasks);
+}
+
+function renderTasks(tasks) {
+  const list = document.getElementById("task-list");
+  list.innerHTML = "";
+
+  // filter out completed tasks
+  const incompleteTasks = tasks.filter(task => !task.completed);
+
+  // for each incomplete task in the list, create a new `li` element and
+  // build the row elements with it (checkbox, title, desc, delete button)
+  incompleteTasks.forEach(task => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <label>
+        <input type="checkbox" onchange="toggleTask('${task.id}')">
+        <strong>${task.name}</strong>
+        ${task.description ? ` - <span>${task.description}</span>` : ""}
+      </label>
+      <button onclick="deleteTask('${task.id}')">Delete</button>
+    `;
+
+    list.appendChild(li);
+  });
+
+  // placeholder for new task elements
+  const placeholder = document.createElement("li");
+  placeholder.innerHTML = `
+    <label>
+      <input type="checkbox" disabled>
+      <span contenteditable="true">Add new task...</span>
+    </label>
+  `;
+  list.appendChild(placeholder);
+}
+
+async function addTask() {
+  const input = document.getElementById("new-task");
+  const descriptionInput = document.getElementById("new-description");
+  const name = input.value.trim();
+  const description = descriptionInput.value.trim();
+  
+  if (!name) return;
+
+  const res = await fetch("/tasks", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      name: name,
+      description: description || null
+    })
+  });
+  const data = await res.json();
+  if (data.success) {
+    fetchTasks();
+    input.value = "";
+    descriptionInput.value = "";
+  }
+}
+
+async function deleteTask(id) {
+  const res = await fetch(`/tasks/${id}`, { method: "DELETE" });
+  const data = await res.json();
+  if (data.success) {
+    fetchTasks();
+  }
+}
+
+async function toggleTask(id) {
+  const res = await fetch(`/tasks/${id}/toggle_complete`, { method: "PATCH" });
+  const data = await res.json();
+  if (data.success) {
+    fetchTasks();
+  }
+}
+
+document.getElementById("add-task-btn").addEventListener("click", addTask);
+
+// load initial list of tasks
+fetchTasks();
+</script>
 {% endblock %}
