@@ -1,16 +1,18 @@
 class Task:
-    def __init__(self, task_id, name, description):
+    def __init__(self, task_id, name, description, completed=False):
         self._task_id = None
         self._name = None
         self._description = None
+        self._completed = None
 
         # use @property setters to handle validation
         self.task_id = task_id
         self.name = name
         self.description = description
+        self.completed = completed
 
     def __repr__(self):
-        return f"<Task {self.task_id} Name: {self.name} Description: {self.description}>"
+        return f"<Task {self.task_id} Name: {self.name} Description: {self.description}> Completed: {self.completed}"
 
     @property
     def task_id(self):
@@ -50,9 +52,20 @@ class Task:
             )
         self._description = value
 
+    @property
+    def completed(self):
+        return self._completed
+
+    @completed.setter
+    def completed(self, value):
+        if not isinstance(value, bool):
+            raise ValueError("Completed must be a boolean value")
+        self._completed = value
+
     def to_dict(self):
         return {
             "id": self.task_id,
             "name": self.name,
             "description": self.description,
+            "completed": self.completed,
         }
