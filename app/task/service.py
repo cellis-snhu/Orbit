@@ -5,13 +5,13 @@ class TaskService:
         self.tasks = []
         self.next_task_id = 1
 
-    def create_task(self, name, description=None, completed=False):
+    def create_task(self, name, description=None, priority=None, completed=False):
         task_id = str(self.next_task_id)
 
         if any(task.task_id == task_id for task in self.tasks):
             raise ValueError(f"Task with id '{task_id}' already exists")
 
-        task = Task(task_id, name, description, completed)
+        task = Task(task_id, name, description, priority, completed)
         self.tasks.append(task)
         self.next_task_id += 1
         return task
@@ -40,6 +40,16 @@ class TaskService:
 task_service = TaskService()
 
 # sample tasks for testing
-task_service.create_task("Get milk", "Go to the store for milk", False)
-task_service.create_task("Study Chemistry", "Study for chemistry test", False)
-task_service.create_task("Practice Guitar", "Spend an hour playing guitar", False)
+task_service.create_task("Get milk", "Go to the store for milk", "low", False)
+task_service.create_task("Study Chemistry", "Study for chemistry test", None, False)
+task_service.create_task("Practice Guitar", "Spend an hour playing guitar", "high", False)
+task_service.create_task("Clean Room", "Tidy up bedroom and organize desk", "medium", False)
+task_service.create_task("Read Book", "Read 30 pages of a novel", None, False)
+task_service.create_task("Exercise", "Go for a 30-minute run", "high", False)
+task_service.create_task("Call Mom", "Check in with mom and chat", "low", False)
+task_service.create_task("Write Journal", "Reflect on today's events", None, False)
+task_service.create_task("Grocery Shopping", "Buy vegetables and fruits", "medium", False)
+task_service.create_task("Finish Report", "Complete work report before deadline", "high", False)
+task_service.create_task("Meditate", "Spend 15 minutes meditating", "low", False)
+task_service.create_task("Water Plants", "Water all indoor plants", None, False)
+task_service.create_task("Plan Trip", "Research destinations and flights", "medium", False)

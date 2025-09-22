@@ -10,9 +10,9 @@ def task_service():
 @pytest.fixture
 def sample_tasks():
     return [
-        Task("task1", "Task 1", "Description for Task 1"),
-        Task("task2", "Task 2", "Description for Task 2"),
-        Task("task3", "Task 3", "Description for Task 3"),
+        Task("task1", "Task 1", "Description for Task 1", "low"),
+        Task("task2", "Task 2", "Description for Task 2", "medium"),
+        Task("task3", "Task 3", "Description for Task 3", "high"),
     ]
 
 
@@ -52,7 +52,7 @@ def test_get_task_by_id(task_service, sample_tasks):
 
 
 def test_update_task_name(task_service):
-    task = Task("task1", "Task 1", "Description for Task 1")
+    task = Task("task1", "Task 1", "Description for Task 1", None)
     task_service.tasks.append(task)
     # simulate update call
     task.name = "Updated Task Name"
@@ -64,7 +64,7 @@ def test_update_task_name(task_service):
 
 
 def test_update_task_description(task_service):
-    task = Task("task1", "Task 1", "Description for Task 1")
+    task = Task("task1", "Task 1", "Description for Task 1", None)
     task_service.tasks.append(task)
     task.description = "Updated Task Description"
 

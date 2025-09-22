@@ -1,18 +1,20 @@
 class Task:
-    def __init__(self, task_id, name, description, completed=False):
+    def __init__(self, task_id, name, description, priority, completed=False):
         self._task_id = None
         self._name = None
         self._description = None
         self._completed = None
+        self._priority = None
 
         # use @property setters to handle validation
         self.task_id = task_id
         self.name = name
         self.description = description
+        self.priority = priority
         self.completed = completed
 
     def __repr__(self):
-        return f"<Task {self.task_id} Name: {self.name} Description: {self.description}> Completed: {self.completed}"
+        return f"<Task {self.task_id} Name: {self.name} Description: {self.description} Priority: {self.priority} Completed: {self.completed}"
 
     @property
     def task_id(self):
@@ -62,10 +64,23 @@ class Task:
             raise ValueError("Completed must be a boolean value")
         self._completed = value
 
+    @property
+    def priority(self):
+        return self._priority
+
+    @priority.setter
+    def priority(self, value):
+        valid_priorities = {"low", "medium", "high"}
+        if value is not None and value not in valid_priorities:
+            raise ValueError(f"Priority must be one of {valid_priorities} or None.")
+        self._priority = value
+
     def to_dict(self):
         return {
             "id": self.task_id,
             "name": self.name,
             "description": self.description,
+            "priority": self.priority,
             "completed": self.completed,
         }
+
