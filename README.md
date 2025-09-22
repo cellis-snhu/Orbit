@@ -28,3 +28,9 @@ pip install -r pyproject.toml
 
 flask run
 ```
+
+#### Run tests
+
+```shell
+uv run python -m pytest
+```

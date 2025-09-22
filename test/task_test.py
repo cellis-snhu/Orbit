@@ -5,6 +5,8 @@ valid_task_id = "1"
 valid_name = "taskname"
 valid_description = "null"
 valid_completed_bool = False
+valid_priority_strings = ["low", "medium", "high"]
+valid_priority_none = None
 
 invalid_task_id_too_long = "12345678901"
 invalid_task_id_null = None
@@ -14,7 +16,7 @@ invalid_description_too_long = "TooLongDescriptionForTaskThatIsInvalidBecauseItI
 
 @pytest.fixture
 def valid_task():
-    return Task(valid_task_id, valid_name, valid_description, valid_completed_bool)
+    return Task(valid_task_id, valid_name, valid_description, valid_priority_none, valid_completed_bool)
 
 
 def test_valid_task_constructor(valid_task):
@@ -26,16 +28,16 @@ def test_valid_task_constructor(valid_task):
 
 def test_invalid_task_constructor_task_id_too_long():
     with pytest.raises(ValueError):
-        Task(invalid_task_id_too_long, valid_name, valid_description)
+        Task(invalid_task_id_too_long, valid_name, valid_description, valid_priority_none)
 
 
 def test_invalid_task_constructor_task_id_null():
     with pytest.raises(ValueError):
-        Task(invalid_task_id_null, valid_name, valid_description)
+        Task(invalid_task_id_null, valid_name, valid_description, valid_priority_none)
 
 def test_invalid_task_constructor_completed_not_bool():
     with pytest.raises(ValueError):
-        Task(valid_task_id, valid_name, valid_description, None)
+        Task(valid_task_id, valid_name, valid_description, valid_priority_none, None)
 
 def test_valid_set_name(valid_task):
     new_name = "NewName"
@@ -86,11 +88,25 @@ def test_task_id_immutable(valid_task):
         valid_task.task_id = "new_id"
 
 def test_task_repr(valid_task):
-    assert  f"<Task {valid_task_id} Name: {valid_name} Description: {valid_description}> Completed: {valid_completed_bool}" == valid_task.__repr__()
+    assert  f"<Task {valid_task_id} Name: {valid_name} Description: {valid_description} Priority: {valid_priority_none} Completed: {valid_completed_bool}" == valid_task.__repr__()
 
 def test_task_to_dict(valid_task):
     valid_task_dict = valid_task.to_dict()
 
-    assert valid_task_dict == {'id': '1', 'name': 'taskname', 'description': 'null', 'completed': False}
-                               
-                               # '')
+    assert valid_task_dict == {'id': '1', 'name': 'taskname', 'description': 'null', 'priority': None, 'completed': False}
+
+def test_task_priority_none(valid_task):
+    assert valid_task.priority is None
+
+def test_task_priority_any(valid_task):
+    assert valid_task.priority is None or valid_task.priority in valid_priority_strings
+
+def test_task_priority_low():
+    Task(valid_task_id, valid_name, valid_description, "low", valid_completed_bool)
+
+def test_task_priority_medium():
+    Task(valid_task_id, valid_name, valid_description, "medium", valid_completed_bool)
+
+def test_task_priority_high():
+    Task(valid_task_id, valid_name, valid_description, "high", valid_completed_bool)
+
