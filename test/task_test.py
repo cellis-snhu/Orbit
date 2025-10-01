@@ -110,3 +110,7 @@ def test_task_priority_medium():
 def test_task_priority_high():
     Task(valid_task_id, valid_name, valid_description, "high", valid_completed_bool)
 
+def test_task_priority_invalid_input():
+    with pytest.raises(ValueError):
+        Task(valid_task_id, valid_name, valid_description, "invalid", valid_completed_bool)
+
