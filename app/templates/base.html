@@ -17,6 +17,16 @@
 <body class="bg-dark text-light">
 <h2 class="text-center mb-1">Orbit Task Manager</h2>
 <hr class="border-light">
+<hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
 {% block content %}{% endblock %}
 </body>
 
