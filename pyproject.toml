@@ -6,6 +6,7 @@ requires-python = ">=3.13"
 dependencies = [
     "coverage==7.10.6",
     "flask==3.1.2",
+    "flask-wtf==1.2.2",
     "pytest==8.4.2",
     "ruff==0.13.0",
     "six==1.17.0",
