@@ -9,11 +9,17 @@
         <div class="mb-3">
             {{ form.username.label(class="form-label text-light") }}
             {{ form.username(class="form-control bg-secondary text-light border-light", size=32) }}
+            {% for error in form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
         </div>
 
         <div class="mb-3">
             {{ form.password.label(class="form-label text-light") }}
             {{ form.password(class="form-control bg-secondary text-light border-light", size=32) }}
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
         </div>
 
         <div class="form-check mb-3">

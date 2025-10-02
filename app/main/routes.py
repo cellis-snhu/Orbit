@@ -1,4 +1,4 @@
-from flask import render_template, redirect, flash
+from flask import render_template, redirect, flash, url_for
 from ..task.service import task_service
 from .forms import LoginForm
 
@@ -18,5 +18,5 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         flash('Login requested for user {}, remember_me={}'.format(form.username.data, form.remember_me.data))
-        return redirect("/index")
+        return redirect(url_for('main.index'))
     return render_template('login.html', title='Sign In', form=form)
