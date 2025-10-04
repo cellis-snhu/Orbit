@@ -17,7 +17,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
-
+    login.login_view = 'main.login'
 
     from app.main import bp as main_bp
     from app.task import bp as task_bp
