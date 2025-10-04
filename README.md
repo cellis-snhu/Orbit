@@ -43,6 +43,16 @@ flask db migrate -m 'initial migration'
 flask db upgrade
 ```
 
+### Setup a test user in the database
+```shell
+flask shell
+
+>>> u = User(username='yourusername', email='yourname@example.com')
+>>> u.set_password('testpass')
+>>> db.session.add(u)
+>>> db.session.commmit()
+```
+
 #### Run tests
 
 ```shell
