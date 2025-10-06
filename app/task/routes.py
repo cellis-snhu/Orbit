@@ -1,8 +1,11 @@
 from flask import request, jsonify
 from app.task import bp
 from app.task.service import task_service
+from flask_login import login_required
+
 
 @bp.route("/", methods=["GET"])
+@login_required
 def list_tasks():
     tasks = [
         {"id": t.task_id, "name": t.name, "description": t.description, "priority": t.priority, "completed": t.completed}
@@ -11,6 +14,7 @@ def list_tasks():
     return jsonify(tasks)
 
 @bp.route("/", methods=["POST"])
+@login_required
 def create_task():
     data = request.json
     name = data.get("name")
@@ -28,6 +32,7 @@ def create_task():
     })
 
 @bp.route("/<task_id>", methods=["DELETE"])
+@login_required
 def delete_task(task_id):
     try:
         task_service.delete_task(task_id)
@@ -37,6 +42,7 @@ def delete_task(task_id):
 
 
 @bp.route("/<task_id>/toggle_complete", methods=["PATCH"])
+@login_required
 def toggle_task(task_id):
     try:
         task = task_service.toggle_task_completion(task_id)
