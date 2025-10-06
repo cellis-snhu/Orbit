@@ -53,6 +53,29 @@ flask shell
 >>> db.session.commmit()
 ```
 
+## Setup Production Postgresql database
+Setup the initial database container by running
+```shell
+docker compose up -d
+```
+
+After, setup the initial migrations by running:
+```shell
+flask db migrate -m 'initial migration'
+
+flask db upgrade
+```
+
+Lastly, set the `DATABASE_URL` environment variable as below with the correct strings
+(the test postgres db is this string below)
+
+```shell
+DATABASE_URL=postgresql://postgres:secret@localhost:5432/postgres
+```
+
+run flask with
+`flask run` or `uv run flask run`
+
 #### Run tests
 
 ```shell
