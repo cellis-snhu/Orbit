@@ -1,43 +1,31 @@
 import pytest
 from app.task.models import Task
 
-valid_task_id = "1"
 valid_name = "taskname"
 valid_description = "null"
 valid_completed_bool = False
 valid_priority_strings = ["low", "medium", "high"]
 valid_priority_none = None
 
-invalid_task_id_too_long = "12345678901"
-invalid_task_id_null = None
 invalid_name_too_long = "TooLongOfANameForTask"
 invalid_description_too_long = "TooLongDescriptionForTaskThatIsInvalidBecauseItIsMoreThan50Characters"
 
 
 @pytest.fixture
 def valid_task():
-    return Task(valid_task_id, valid_name, valid_description, valid_priority_none, valid_completed_bool)
+    return Task(name=valid_name, description=valid_description, priority=valid_priority_none, completed=valid_completed_bool)
 
 
 def test_valid_task_constructor(valid_task):
-    assert valid_task.task_id == valid_task_id
+    assert valid_task.id is None  # not persisted yet
     assert valid_task.name == valid_name
     assert valid_task.description == valid_description
     assert valid_task.completed is False
 
 
-def test_invalid_task_constructor_task_id_too_long():
-    with pytest.raises(ValueError):
-        Task(invalid_task_id_too_long, valid_name, valid_description, valid_priority_none)
-
-
-def test_invalid_task_constructor_task_id_null():
-    with pytest.raises(ValueError):
-        Task(invalid_task_id_null, valid_name, valid_description, valid_priority_none)
-
 def test_invalid_task_constructor_completed_not_bool():
     with pytest.raises(ValueError):
-        Task(valid_task_id, valid_name, valid_description, valid_priority_none, None)
+        Task(name=valid_name, description=valid_description, priority=valid_priority_none, completed=None)
 
 def test_valid_set_name(valid_task):
     new_name = "NewName"
@@ -71,10 +59,6 @@ def test_invalid_set_description_too_long(valid_task):
         valid_task.description = invalid_description_too_long
 
 
-def test_get_task_id(valid_task):
-    assert valid_task.task_id == valid_task_id
-
-
 def test_get_name(valid_task):
     assert valid_task.name == valid_name
 
@@ -83,34 +67,37 @@ def test_get_description(valid_task):
     assert valid_task.description == valid_description
 
 
-def test_task_id_immutable(valid_task):
-    with pytest.raises(AttributeError):
-        valid_task.task_id = "new_id"
-
 def test_task_repr(valid_task):
-    assert  f"<Task {valid_task_id} Name: {valid_name} Description: {valid_description} Priority: {valid_priority_none} Completed: {valid_completed_bool}" == valid_task.__repr__()
+    repr_str = valid_task.__repr__()
+    assert "Task" in repr_str and valid_name in repr_str and valid_description in repr_str
+
 
 def test_task_to_dict(valid_task):
     valid_task_dict = valid_task.to_dict()
+    assert valid_task_dict == {'id': None, 'name': 'taskname', 'description': 'null', 'priority': None, 'completed': False}
 
-    assert valid_task_dict == {'id': '1', 'name': 'taskname', 'description': 'null', 'priority': None, 'completed': False}
 
 def test_task_priority_none(valid_task):
     assert valid_task.priority is None
 
+
 def test_task_priority_any(valid_task):
     assert valid_task.priority is None or valid_task.priority in valid_priority_strings
 
+
 def test_task_priority_low():
-    Task(valid_task_id, valid_name, valid_description, "low", valid_completed_bool)
+    Task(name=valid_name, description=valid_description, priority="low", completed=valid_completed_bool)
+
 
 def test_task_priority_medium():
-    Task(valid_task_id, valid_name, valid_description, "medium", valid_completed_bool)
+    Task(name=valid_name, description=valid_description, priority="medium", completed=valid_completed_bool)
+
 
 def test_task_priority_high():
-    Task(valid_task_id, valid_name, valid_description, "high", valid_completed_bool)
+    Task(name=valid_name, description=valid_description, priority="high", completed=valid_completed_bool)
+
 
 def test_task_priority_invalid_input():
     with pytest.raises(ValueError):
-        Task(valid_task_id, valid_name, valid_description, "invalid", valid_completed_bool)
+        Task(name=valid_name, description=valid_description, priority="invalid", completed=valid_completed_bool)
 

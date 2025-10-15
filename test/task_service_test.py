@@ -1,102 +1,98 @@
 import pytest
-from app.task.models import Task
+from app import create_app, db
+from config import Config
 from app.task.service import TaskService
 
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+
+
 @pytest.fixture
-def task_service():
+def app():
+    app = create_app(TestConfig)
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.session.remove()
+        db.drop_all()
+
+
+@pytest.fixture
+def task_service(app):
     return TaskService()
 
 
 @pytest.fixture
 def sample_tasks():
     return [
-        Task("task1", "Task 1", "Description for Task 1", "low"),
-        Task("task2", "Task 2", "Description for Task 2", "medium"),
-        Task("task3", "Task 3", "Description for Task 3", "high"),
+        dict(name="Task 1", description="Description for Task 1", priority="low"),
+        dict(name="Task 2", description="Description for Task 2", priority="medium"),
+        dict(name="Task 3", description="Description for Task 3", priority="high"),
     ]
 
 
 def test_add_single_task(task_service, sample_tasks):
-    task_service.tasks.append(sample_tasks[0])
+    task = task_service.create_task(**sample_tasks[0])
     tasks = task_service.list_tasks()
     assert len(tasks) == 1
-    assert tasks[0] == sample_tasks[0]
+    assert tasks[0].id == task.id
+    assert tasks[0].name == "Task 1"
 
 
 def test_add_multiple_tasks(task_service, sample_tasks):
-    for task in sample_tasks:
-        task_service.tasks.append(task)
+    for data in sample_tasks:
+        task_service.create_task(**data)
     tasks = task_service.list_tasks()
     assert len(tasks) == 3
-    assert tasks[0] == sample_tasks[0]
-    assert tasks[1] == sample_tasks[1]
-    assert tasks[2] == sample_tasks[2]
+    assert [t.name for t in tasks] == ["Task 1", "Task 2", "Task 3"]
 
 
 def test_delete_single_task(task_service, sample_tasks):
-    task_service.tasks.append(sample_tasks[0])
+    task = task_service.create_task(**sample_tasks[0])
     tasks = task_service.list_tasks()
     assert len(tasks) == 1
 
-    task_service.delete_task("task1")
+    task_service.delete_task(task.id)
     with pytest.raises(ValueError):
-        task_service.get_task("task1")
+        task_service.get_task(task.id)
     assert len(task_service.list_tasks()) == 0
 
 
 def test_get_task_by_id(task_service, sample_tasks):
-    task_service.tasks.append(sample_tasks[0])
-    found_task = task_service.get_task("task1")
+    task = task_service.create_task(**sample_tasks[0])
+    found_task = task_service.get_task(task.id)
     assert found_task is not None
-    assert found_task == sample_tasks[0]
+    assert found_task.id == task.id
 
 
 def test_update_task_name(task_service):
-    task = Task("task1", "Task 1", "Description for Task 1", None)
-    task_service.tasks.append(task)
-    # simulate update call
+    task = task_service.create_task(name="Task 1", description="Description for Task 1", priority=None)
     task.name = "Updated Task Name"
+    db.session.commit()
 
-    updated_task = task_service.get_task("task1")
+    updated_task = task_service.get_task(task.id)
     assert updated_task.name == "Updated Task Name"
-    assert updated_task.name != "Task 1"
     assert updated_task.description == "Description for Task 1"
 
 
 def test_update_task_description(task_service):
-    task = Task("task1", "Task 1", "Description for Task 1", None)
-    task_service.tasks.append(task)
+    task = task_service.create_task(name="Task 1", description="Description for Task 1", priority=None)
     task.description = "Updated Task Description"
+    db.session.commit()
 
-    updated_task = task_service.get_task("task1")
+    updated_task = task_service.get_task(task.id)
     assert updated_task.name == "Task 1"
     assert updated_task.description == "Updated Task Description"
-    assert updated_task.description != "Description for Task 1"
-
-
-def test_add_task_already_exists(task_service):
-    task_service.create_task("First Task", "First description")
-
-    # reset taskID to old value
-    task_service.next_task_id = 1
-
-    # creating another task should raise ValueError
-    with pytest.raises(ValueError, match="already exists"):
-        task_service.create_task("Duplicate Task", "Should fail")
 
 
 def test_delete_task_not_found(task_service):
     with pytest.raises(ValueError):
-        if not task_service.delete_task("task1"):
-            raise ValueError("Task not found")
+        task_service.delete_task(9999)
 
 
-def test_update_task_name_not_found(task_service):
+def test_get_task_not_found(task_service):
     with pytest.raises(ValueError):
-        task_service.get_task("nonexistentTask")
-
-
-def test_update_task_description_not_found(task_service):
-    with pytest.raises(ValueError, match="Task with id 'nonexistentTask' not found"):
-        task_service.get_task("nonexistentTask")
+        task_service.get_task(9999)
 
