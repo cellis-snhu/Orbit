@@ -1,6 +1,4 @@
 from flask import Flask
-from app.task.service import TaskService
-from app.task.service import task_service
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
