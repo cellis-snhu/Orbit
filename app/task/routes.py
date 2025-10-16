@@ -8,7 +8,7 @@ from flask_login import login_required
 @login_required
 def list_tasks():
     tasks = [
-        {"id": t.task_id, "name": t.name, "description": t.description, "priority": t.priority, "completed": t.completed}
+        {"id": t.id, "name": t.name, "description": t.description, "priority": t.priority, "completed": t.completed}
         for t in task_service.list_tasks()
     ]
     return jsonify(tasks)
@@ -28,7 +28,7 @@ def create_task():
     task = task_service.create_task(name, description, priority, completed)
     return jsonify({
         "success": True,
-        "task": {"id": task.task_id, "name": task.name, "description": task.description, "priority": task.priority, "completed": task.completed},
+        "task": {"id": task.id, "name": task.name, "description": task.description, "priority": task.priority, "completed": task.completed},
     })
 
 @bp.route("/<task_id>", methods=["DELETE"])
@@ -48,7 +48,7 @@ def toggle_task(task_id):
         task = task_service.toggle_task_completion(task_id)
         return jsonify({
             "success": True,
-            "task": {"id": task.task_id, "name": task.name, "description": task.description, "completed": task.completed}
+            "task": {"id": task.id, "name": task.name, "description": task.description, "completed": task.completed}
         })
     except ValueError as e:
         return jsonify({"success": False, "error": str(e)}), 404

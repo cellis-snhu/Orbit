@@ -1,6 +1,4 @@
 from flask import Flask
-from app.task.service import TaskService
-from app.task.service import task_service
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -21,6 +19,8 @@ def create_app(config_class=Config):
 
     from app.main import bp as main_bp
     from app.task import bp as task_bp
+    from app.main import routes as main_routes
+    from app.task import routes as task_routes
 
     from app import models
 
